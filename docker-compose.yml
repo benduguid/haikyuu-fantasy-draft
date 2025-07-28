@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: haikyuu-fantasy-postgres
+    environment:
+      POSTGRES_DB: haikyuu_fantasy_db
+      POSTGRES_USER: haikyuu_user
+      POSTGRES_PASSWORD: haikyuu_pass123
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U haikyuu_user -d haikyuu_fantasy_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
