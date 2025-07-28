@@ -29,6 +29,25 @@ export enum Position {
   Opposite = 5
 }
 
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  displayName?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  email: string;
+  displayName?: string;
+  expiresAt: Date;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -40,6 +59,15 @@ export class ApiService {
   // Test endpoint
   testConnection(): Observable<any> {
     return this.http.get(`${this.apiUrl}/players/test`);
+  }
+
+  // Auth endpoints
+  register(request: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, request);
+  }
+
+  login(request: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, request);
   }
 
   // Player endpoints

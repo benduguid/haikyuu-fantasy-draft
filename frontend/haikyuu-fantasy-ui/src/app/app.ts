@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterModule } from '@angular/router';
 
 // Angular Material imports
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
-import { ApiService } from './core/services/api.service';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +16,7 @@ import { ApiService } from './core/services/api.service';
   imports: [
     CommonModule,
     RouterOutlet,
+    RouterModule,
     MatToolbarModule,
     MatButtonModule,
     MatCardModule,
@@ -26,24 +27,13 @@ import { ApiService } from './core/services/api.service';
 })
 export class AppComponent {
   title = 'haikyuu-fantasy-ui';
-  apiTestResult: any = null;
-  apiError: string | null = null;
+  currentUser$;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private authService: AuthService) {
+    this.currentUser$ = this.authService.currentUser$;
+  }
 
-  testBackendConnection(): void {
-    this.apiTestResult = null;
-    this.apiError = null;
-
-    this.apiService.testConnection().subscribe({
-      next: (result) => {
-        console.log('API Test Success:', result);
-        this.apiTestResult = result;
-      },
-      error: (error) => {
-        console.error('API Test Error:', error);
-        this.apiError = error.message || 'Failed to connect to backend';
-      }
-    });
+  logout(): void {
+    this.authService.logout();
   }
 }
